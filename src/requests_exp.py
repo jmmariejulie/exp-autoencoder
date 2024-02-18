@@ -1,16 +1,31 @@
 import requests
 import os
 
-api_url = "http://127.0.0.1:11682/embeddings/65bfaf0c7371e83a29801a08"
-response = requests.get(api_url)
-print(response.json())
+from embedding_service import EmbeddingService
 
-embedding = response.json()
+service_url: str = "http://127.0.0.1:58359"
+
+embeddingService = EmbeddingService(service_url)
+
+embedding = embeddingService.get("65bfaf0c7371e83a29801a08")
 print(embedding['id'])
 print(embedding['name'])
 print(embedding['embeddingSets'][0]['embeddings'][0]['descriptor'])
 
-api_url = "http://127.0.0.1:11682/analyzer/ifs"
+print("All embedding ids")
+embeddings = embeddingService.get_all()
+print(embeddings)
+
+# Print all the embeddings
+print("All embeddings")
+for id in embeddings:
+    embedding = embeddingService.get(id)
+    print(embedding['embeddingSets'][0]['embeddings'][0]['descriptor'])
+
+#
+api_url = "http://127.0.0.1:58359/analyzer/ifs"
+
+print("Sending request to ", api_url)
 
 ## Send a POST request with a binary file payload
 with open("data/test/image1.jpg", "rb") as file:
@@ -24,4 +39,8 @@ with open(path_img, "rb") as img:
     name_img = os.path.basename(path_img)
     files = {'file': (name_img, img)}
     response = requests.request("POST", api_url, headers=headers, data=payload, files=files)
-    print(response.text)
+    embedding = response.json()
+    print(embedding['id'])
+    print(embedding['name'])
+    print(embedding['embeddingSets'][0]['embeddings'][0]['descriptor'])
+

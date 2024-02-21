@@ -67,7 +67,9 @@ train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 # Display the latent vector for one image
 inputs, _ = train_loader.dataset[1]
 inputs = inputs.to(hardware)
+print("inputs.shape", inputs.shape)
 output, latent = autoencoder(inputs)
+print("output.shape", output.shape)
 print(latent)
 
 #training loop

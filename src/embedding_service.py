@@ -16,3 +16,13 @@ class EmbeddingService:
         response = requests.get(api_url)
         return response.json()
     
+    # Return an array of all descriptors in an Embedding
+    def get_descriptors(self, embedding_id: str, embeddingSetIndex: int = 0):    
+        embedding = self.get(embedding_id)
+        descriptors = []
+        embeddingSet = embedding['embeddingSets'][embeddingSetIndex]  
+        for embedding in embeddingSet['embeddings']:
+            descriptors.append(embedding['descriptor'])
+        return descriptors
+    
+

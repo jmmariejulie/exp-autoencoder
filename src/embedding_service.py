@@ -1,5 +1,6 @@
 import requests
 from io import BytesIO
+import json
 
 class EmbeddingService:
     service_url: str = ""
@@ -22,6 +23,11 @@ class EmbeddingService:
         response = requests.get(api_url)
         return response.json()
     
+    # Read from file as json
+    def read_from_file(self, path: str):
+        with open(path, "r") as file:
+            return json.load(file)
+    
     # Return an array of all descriptors in an Embedding
     def get_descriptors(self, embedding_id: str, embeddingSetIndex: int = 0):    
         embedding = self.get(embedding_id)
@@ -30,7 +36,17 @@ class EmbeddingService:
         for embedding in embeddingSet['embeddings']:
             descriptors.append(embedding['descriptor'])
         return descriptors
-    
+
+    # Return an array of all descriptors in an Embedding read from file
+    def get_descriptors_from_file(self, path: str, embeddingSetIndex: int = 0):    
+        embedding = self.read_from_file(path)
+        descriptors = []
+        embeddingSet = embedding['embeddingSets'][embeddingSetIndex]  
+        for embedding in embeddingSet['embeddings']:
+            descriptors.append(embedding['descriptor'])
+        return descriptors
+
+
     # Build embedding from a list of descriptors
     def build_embedding(self, descriptors: list):
         embedding = {
@@ -57,3 +73,5 @@ class EmbeddingService:
             print("get_image_from_embedding_ifs: Error", response.status_code)
             return None
         return BytesIO(response.content)
+    
+        
